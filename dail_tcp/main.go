@@ -2,28 +2,24 @@ package main
 
 import (
 	"bufio"
+	"dail/config"
 	"fmt"
 	"net"
 	"os"
+	"strconv"
 )
 
 func main() {
+
+	// local config json
+	conf := config.LoadConfig()
 	// Connect to the server
-	conn, err := net.Dial("tcp", "localhost:8080")
+
+	conn, err := net.Dial("tcp", conf.Host+":"+strconv.Itoa(conf.Port))
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-
-	// Close the connection
-	//defer conn.Close()
-
-	// Send some data to the server
-	// _, err = conn.Write([]byte("Hello from client"))
-	// if err != nil {
-	// 	fmt.Println(err)
-	// 	return
-	// }
 
 	defer conn.Close()
 

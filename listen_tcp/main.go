@@ -2,21 +2,23 @@ package main
 
 import (
 	"bufio"
-	"strings"
-	//"context"
 	"fmt"
 	"net"
-)
+	"strconv"
+	"strings"
 
-const (
-	HOST = "localhost"
-	PORT = "8080"
+	"serve/config"
 )
 
 func main() {
+
+	// load service config
+	conf := config.LoadConfig()
+
 	// Listen for incoming connections on port 8080
-	serve, err := net.Listen("tcp", HOST+":"+PORT)
-	fmt.Println("listening on port: ", PORT)
+	serve, err := net.Listen("tcp", conf.Host+":"+strconv.Itoa(conf.Port))
+
+	fmt.Println("listening on port: ", conf.Port)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -39,8 +41,6 @@ func main() {
 }
 
 func handleConnection(conn net.Conn) {
-	// Close the connection when we're done
-	defer conn.Close()
 
 	reader := bufio.NewReader(conn)
 	for {
@@ -49,12 +49,26 @@ func handleConnection(conn net.Conn) {
 			fmt.Printf("Client disconnected: %v\n", err)
 			return
 		}
-		fmt.Printf("Received message from client: %s\n", message)
 
-		_, err = conn.Write([]byte(strings.ToUpper(message)))
+		// why you doing this bro
+		trimmedMsg := strings.TrimRight(message, "\n")
+		if trimmedMsg == "close connection" ||
+			trimmedMsg == "499" {
+			handleConnClose(conn)
+		} else {
+			fmt.Printf("Received message from client: %s\n", message)
 
-		// can also use //fmt.Fprintf(conn, "echo: %s", strings.ToUpper(message))
-		// but for the collect good of understanding.. keep it readable
+			_, err = conn.Write([]byte(strings.ToUpper(message)))
+
+			// can also use //fmt.Fprintf(conn, "echo: %s", strings.ToUpper(message))
+			// but for the collect good of understanding.. keep it readable
+		}
 
 	}
+}
+
+// Close the connection when we're done
+func handleConnClose(conn net.Conn) {
+	fmt.Println("closing connection for host: ", conn.RemoteAddr())
+	conn.Close()
 }
