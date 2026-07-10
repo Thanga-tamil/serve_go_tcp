@@ -20,14 +20,17 @@ type KeySpace struct {
 }
 
 const (
-	PATH = "/home/milrine/_projects/gogo/serve_tcp/config.json"
+	PATH = "/_projects/gogo/serve_tcp/config.json"
 )
 
 func LoadConfig() *Config {
 
 	log.Println("loading config.json from path:: ", PATH)
 
-	file, err := os.Open(PATH) // For read access.
+	HOME, _ := os.UserHomeDir()
+
+	file, err := os.Open(HOME + PATH) // For read access.
+
 	if err != nil {
 		log.Fatal(err)
 	}

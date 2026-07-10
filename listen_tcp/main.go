@@ -9,6 +9,7 @@ import (
 
 	"serve/cassandra"
 	"serve/config"
+	"serve/service"
 )
 
 func main() {
@@ -18,6 +19,8 @@ func main() {
 
 	dbAddr := conf.Schema.Host + ":" + strconv.Itoa(conf.Schema.Port)
 	cassandra.InitDb(dbAddr, conf.Schema.DB)
+
+	service.RegisterUser()
 
 	tcpAddr := conf.Host + ":" + strconv.Itoa(conf.Port)
 	serve, err := net.Listen("tcp", tcpAddr)
@@ -36,7 +39,7 @@ func main() {
 			continue
 		}
 
-		// Handle the connection in a new goroutine
+		// Handle the connection in a new goroutinecmd
 		go handleConnection(conn)
 	}
 }
