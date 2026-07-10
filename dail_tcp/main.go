@@ -26,7 +26,7 @@ func main() {
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
-		//if 499
+		
 		fmt.Print("Send a message: ")
 		message, _ := reader.ReadString('\n')
 		_, err = conn.Write([]byte(message)) // fmt.Fprintf(conn, message)

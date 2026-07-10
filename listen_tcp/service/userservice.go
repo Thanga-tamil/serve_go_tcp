@@ -1,18 +1,19 @@
 package service
 
 import (
+	"github.com/gocql/gocql"
 	"log"
 	"serve/repo"
-
-	uuidv3 "github.com/envoyproxy/go-control-plane/envoy/extensions/request_id/uuid/v3"
 )
 
 func RegisterUser() {
 
-	uuid := "f672f0d2-eebe-4cea-8f5a-e9454e840e79"
-	uuidv3.new(type)
+	id, _ := gocql.RandomUUID()
+	id1, _ := gocql.RandomUUID()
+
 	log.Println("google's uuid: ", id)
-	repo.InsertUser(uuid, "damn@gmail.com")
+	repo.InsertUser(id, id1.String(), "damn@gmail.com")
 
 	log.Println("RegisterUser func call completed")
+
 }
